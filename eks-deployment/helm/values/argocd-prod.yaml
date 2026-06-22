@@ -58,7 +58,7 @@ schedulerService:
   deployment:
     replicas: 1
     image:
-      repository: nimeshsv814/tf-scheduler-service
-      tag: latest
+      repository: 533595510771.dkr.ecr.us-east-1.amazonaws.com/scheduler-service
+      tag: v1.0.0
 ingress:
   name: smart-parking-prod-alb
