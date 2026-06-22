@@ -5,7 +5,7 @@ authService:
     replicas: 1
     image:
       repository: 533595510771.dkr.ecr.us-east-1.amazonaws.com/auth-service
-      tag: v1.0.0
+      tag: v1.0.1
 bookingService:
   configMap:
     data:
