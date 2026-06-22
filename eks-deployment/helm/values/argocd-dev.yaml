@@ -1,13 +1,11 @@
 namespace: dev
 environment: dev
-
 authService:
   deployment:
     replicas: 1
     image:
-      repository: nimeshsv814/tf-auth-service
-      tag: v4.0.0
-
+      repository: 533595510771.dkr.ecr.us-east-1.amazonaws.com/auth-service
+      tag: 4d58b3d53ab9c3fca65463befba7cc01d469869d
 bookingService:
   configMap:
     data:
@@ -19,14 +17,12 @@ bookingService:
     image:
       repository: nimeshsv814/tf-booking-service
       tag: v8.0.0
-
 frontend:
   deployment:
     replicas: 1
     image:
       repository: nimeshsv814/tf-frontend
       tag: v6.0.8
-
 notificationService:
   configMap:
     data:
@@ -38,14 +34,12 @@ notificationService:
     image:
       repository: nimeshsv814/tf-notification-service
       tag: v8.0.0
-
 parkingService:
   deployment:
     replicas: 1
     image:
       repository: nimeshsv814/tf-parking-service
       tag: v5.0.0
-
 paymentService:
   configMap:
     data:
@@ -60,13 +54,11 @@ paymentService:
     image:
       repository: nimeshsv814/tf-payment-service
       tag: v8.0.0
-
 schedulerService:
   deployment:
     replicas: 1
     image:
       repository: nimeshsv814/tf-scheduler-service
       tag: latest
-
 ingress:
   name: smart-parking-dev-alb
