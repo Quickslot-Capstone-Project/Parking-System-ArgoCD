@@ -21,8 +21,8 @@ frontend:
   deployment:
     replicas: 1
     image:
-      repository: nimeshsv814/tf-frontend
-      tag: v6.0.8
+      repository: 533595510771.dkr.ecr.us-east-1.amazonaws.com/frontend
+      tag: 4fce45d3879b1d390b74f96c18a12feb234255a8
 notificationService:
   configMap:
     data:
