@@ -52,8 +52,8 @@ paymentService:
   deployment:
     replicas: 1
     image:
-      repository: nimeshsv814/tf-payment-service
-      tag: v8.0.0
+      repository: 533595510771.dkr.ecr.us-east-1.amazonaws.com/payment-service
+      tag: v1.0.0
 schedulerService:
   deployment:
     replicas: 1
