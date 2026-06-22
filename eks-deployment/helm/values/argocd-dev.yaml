@@ -1,0 +1,72 @@
+namespace: dev
+environment: dev
+
+authService:
+  deployment:
+    replicas: 1
+    image:
+      repository: nimeshsv814/tf-auth-service
+      tag: v4.0.0
+
+bookingService:
+  configMap:
+    data:
+      APP_ENV: dev
+      SQS_ENABLED: "true"
+      NOTIFICATION_QUEUE_URL: https://sqs.us-east-1.amazonaws.com/533595510771/smart-parking-dev-notifications
+  deployment:
+    replicas: 1
+    image:
+      repository: nimeshsv814/tf-booking-service
+      tag: v8.0.0
+
+frontend:
+  deployment:
+    replicas: 1
+    image:
+      repository: nimeshsv814/tf-frontend
+      tag: v6.0.8
+
+notificationService:
+  configMap:
+    data:
+      APP_ENV: dev
+      SQS_ENABLED: "true"
+      NOTIFICATION_QUEUE_URL: https://sqs.us-east-1.amazonaws.com/533595510771/smart-parking-dev-notifications
+  deployment:
+    replicas: 1
+    image:
+      repository: nimeshsv814/tf-notification-service
+      tag: v8.0.0
+
+parkingService:
+  deployment:
+    replicas: 1
+    image:
+      repository: nimeshsv814/tf-parking-service
+      tag: v5.0.0
+
+paymentService:
+  configMap:
+    data:
+      APP_ENV: dev
+      SQS_ENABLED: "true"
+      NOTIFICATION_QUEUE_URL: https://sqs.us-east-1.amazonaws.com/533595510771/smart-parking-dev-notifications
+      INVOICE_QUEUE_URL: https://sqs.us-east-1.amazonaws.com/533595510771/smart-parking-dev-invoices
+      PAYMENT_INVOICE_BUCKET: smart-parking-dev-invoices-533595510771-us-east-1
+      PAYMENT_INVOICE_KMS_KEY_ARN: arn:aws:kms:us-east-1:533595510771:alias/smart-parking-dev-invoices
+  deployment:
+    replicas: 1
+    image:
+      repository: nimeshsv814/tf-payment-service
+      tag: v8.0.0
+
+schedulerService:
+  deployment:
+    replicas: 1
+    image:
+      repository: nimeshsv814/tf-scheduler-service
+      tag: latest
+
+ingress:
+  name: smart-parking-dev-alb

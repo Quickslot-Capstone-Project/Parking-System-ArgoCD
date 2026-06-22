@@ -1,0 +1,5 @@
+{{- if .Values.bookingService.enabled }}
+{{- $deployment := deepCopy .Values.bookingService.deployment -}}
+{{- $_ := set $deployment "podAnnotations" (dict "checksum/booking-config" (toJson .Values.bookingService.configMap.data | sha256sum)) -}}
+{{ include "smart-parking.renderDeployment" (dict "root" . "deployment" $deployment "service" .Values.bookingService.service) }}
+{{- end }}

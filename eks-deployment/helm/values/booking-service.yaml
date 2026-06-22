@@ -1,0 +1,75 @@
+environment: ""
+
+rollout:
+  enabled: true
+
+rolloutStrategy:
+  default:
+    steps:
+      - setWeight: 20
+      - pause: {}
+      - setWeight: 50
+      - pause: {}
+  dev:
+    steps:
+      - setWeight: 50
+  prod:
+    steps:
+      - setWeight: 20
+      - pause: {}
+      - setWeight: 50
+      - pause: {}
+
+bookingService:
+  enabled: true
+  configMap:
+    name: booking-configmap
+    data:
+      PORT: "4003"
+      AWS_REGION: "us-east-1"
+      BOOKING_TABLE: "smart-parking-bookings"
+      BEDROCK_REGION: "us-east-1"
+      BEDROCK_MODEL_ID: "amazon.nova-pro-v1:0"
+      AI_ASSISTANT_LAMBDA_NAME: "smart-parking-dev-ai-assistant"
+      JWT_SECRET: "smartparking_super_secret"
+      CORS_ORIGIN: "*"
+      PARKING_SERVICE_URL: "http://parking-service"
+      NOTIFICATION_SERVICE_URL: "http://notification-service"
+      INTERNAL_API_KEY: "smartparking_internal_key"
+      BOOKING_HOLD_MINUTES: "10"
+  deployment:
+    name: booking-deploy
+    replicas: 1
+    selectorLabels:
+      app: sps-booking
+    podLabels:
+      app: sps-booking
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 0
+        maxSurge: 1
+    containers:
+      - name: booking-container
+        image:
+          repository: nimeshsv814/tf-booking-service
+          tag: v8.0.0
+        ports:
+          - containerPort: 4003
+        envFromConfigMaps:
+          - booking-configmap
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "200m"
+            memory: "512Mi"
+  service:
+    name: booking-service
+    selectorLabels:
+      app: sps-booking
+    ports:
+      - port: 80
+        targetPort: 4003
+    type: ClusterIP

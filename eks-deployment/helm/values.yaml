@@ -1,0 +1,465 @@
+namespace: sps-ns
+environment: ""
+
+serviceAccount:
+  enabled: true
+  name: smart-parking-app
+
+rollout:
+  enabled: false
+
+rolloutStrategy:
+  default:
+    steps:
+      - setWeight: 20
+      - pause: {}
+      - setWeight: 50
+      - pause: {}
+  dev:
+    steps:
+      - setWeight: 50
+  prod:
+    steps:
+      - setWeight: 20
+      - pause: {}
+      - setWeight: 50
+      - pause: {}
+
+authService:
+  enabled: true
+  configMap:
+    name: auth-configmap
+    data:
+      PORT: "4001"
+      AWS_REGION: "us-east-1"
+      AUTH_USERS_TABLE: "smart-parking-users"
+      JWT_SECRET: "smartparking_super_secret"
+      JWT_EXPIRES_IN: "7d"
+      CORS_ORIGIN: "*"
+      SEED_ADMIN_EMAIL: "admin@parking.com"
+      SEED_ADMIN_PASSWORD: "Admin@123"
+      SEED_USER_EMAIL: "user@parking.com"
+      SEED_USER_PASSWORD: "User@123"
+  deployment:
+    name: auth-deploy
+    replicas: 2
+    selectorLabels:
+      app: sps-auth
+    podLabels:
+      app: sps-auth
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 1
+        maxSurge: 1
+    containers:
+      - name: auth-container
+        image:
+          repository: nimeshsv814/tf-auth-service
+          tag: v4.0.0
+        ports:
+          - containerPort: 4001
+        envFromConfigMaps:
+          - auth-configmap
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "200m"
+            memory: "512Mi"
+  service:
+    name: auth-service
+    annotations:
+      alb.ingress.kubernetes.io/healthcheck-path: /health
+      alb.ingress.kubernetes.io/success-codes: "200-399"
+    selectorLabels:
+      app: sps-auth
+    ports:
+      - port: 80
+        targetPort: 4001
+    type: ClusterIP
+
+bookingService:
+  enabled: true
+  configMap:
+    name: booking-configmap
+    data:
+      PORT: "4003"
+      AWS_REGION: "us-east-1"
+      APP_ENV: "dev"
+      SQS_ENABLED: "false"
+      NOTIFICATION_QUEUE_URL: ""
+      BOOKING_TABLE: "smart-parking-bookings"
+      BEDROCK_REGION: "us-east-1"
+      BEDROCK_MODEL_ID: "amazon.nova-pro-v1:0"
+      AI_ASSISTANT_LAMBDA_NAME: "smart-parking-dev-ai-assistant"
+      JWT_SECRET: "smartparking_super_secret"
+      CORS_ORIGIN: "*"
+      PARKING_SERVICE_URL: "http://parking-service"
+      NOTIFICATION_SERVICE_URL: "http://notification-service"
+      INTERNAL_API_KEY: "smartparking_internal_key"
+      BOOKING_HOLD_MINUTES: "10"
+  deployment:
+    name: booking-deploy
+    replicas: 2
+    selectorLabels:
+      app: sps-booking
+    podLabels:
+      app: sps-booking
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 1
+        maxSurge: 1
+    containers:
+      - name: booking-container
+        image:
+          repository: nimeshsv814/tf-booking-service
+          tag: v8.0.0
+        ports:
+          - containerPort: 4003
+        envFromConfigMaps:
+          - booking-configmap
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "200m"
+            memory: "512Mi"
+  service:
+    name: booking-service
+    annotations:
+      alb.ingress.kubernetes.io/healthcheck-path: /health
+      alb.ingress.kubernetes.io/success-codes: "200-399"
+    selectorLabels:
+      app: sps-booking
+    ports:
+      - port: 80
+        targetPort: 4003
+    type: ClusterIP
+
+frontend:
+  enabled: true
+  configMap:
+    name: frontend-configmap
+    data:
+      VITE_AUTH_SERVICE_URL: "/auth"
+      VITE_PARKING_SERVICE_URL: "/parking"
+      VITE_BOOKING_SERVICE_URL: "/booking"
+      VITE_PAYMENT_SERVICE_URL: "/payment"
+      VITE_NOTIFICATION_SERVICE_URL: "/notification"
+      VITE_RAZORPAY_KEY_ID: "rzp_test_ShFFMxa9JkqmZu"
+  deployment:
+    name: frontend-deploy
+    replicas: 2
+    selectorLabels:
+      app: sps-frontend
+    podLabels:
+      app: sps-frontend
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 1
+        maxSurge: 1
+    containers:
+      - name: frontend-container
+        image:
+          repository: nimeshsv814/tf-frontend
+          tag: v6.0.8
+        ports:
+          - containerPort: 80
+        envFromConfigMaps:
+          - frontend-configmap
+        volumeMounts:
+          - name: frontend-nginx-config
+            mountPath: /etc/nginx/conf.d/default.conf
+            subPath: default.conf
+            readOnly: true
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "200m"
+            memory: "512Mi"
+    volumes:
+      - name: frontend-nginx-config
+        configMap:
+          name: frontend-nginx-config
+  service:
+    name: frontend-svc
+    annotations:
+      alb.ingress.kubernetes.io/healthcheck-path: /
+      alb.ingress.kubernetes.io/success-codes: "200-399"
+    selectorLabels:
+      app: sps-frontend
+    ports:
+      - port: 80
+        targetPort: 80
+    type: ClusterIP
+
+ingress:
+  enabled: true
+  name: smart-parking-alb
+  className: alb
+  annotations:
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}]'
+    alb.ingress.kubernetes.io/load-balancer-attributes: routing.http.drop_invalid_header_fields.enabled=true
+    alb.ingress.kubernetes.io/transforms.auth-service: >-
+      [{"type":"url-rewrite","urlRewriteConfig":{"rewrites":[{"regex":"^/(api/)?auth/?(.*)$","replace":"/$2"}]}}]
+    alb.ingress.kubernetes.io/transforms.parking-service: >-
+      [{"type":"url-rewrite","urlRewriteConfig":{"rewrites":[{"regex":"^/(api/)?parking/?(.*)$","replace":"/$2"}]}}]
+    alb.ingress.kubernetes.io/transforms.booking-service: >-
+      [{"type":"url-rewrite","urlRewriteConfig":{"rewrites":[{"regex":"^/(api/)?booking/?(.*)$","replace":"/$2"}]}}]
+    alb.ingress.kubernetes.io/transforms.payment-service: >-
+      [{"type":"url-rewrite","urlRewriteConfig":{"rewrites":[{"regex":"^/(api/)?payment/?(.*)$","replace":"/$2"}]}}]
+    alb.ingress.kubernetes.io/transforms.notification-service: >-
+      [{"type":"url-rewrite","urlRewriteConfig":{"rewrites":[{"regex":"^/(api/)?notification/?(.*)$","replace":"/$2"}]}}]
+  paths:
+    - path: /api/auth
+      serviceName: auth-service
+      servicePort: 80
+    - path: /auth
+      serviceName: auth-service
+      servicePort: 80
+    - path: /api/parking
+      serviceName: parking-service
+      servicePort: 80
+    - path: /parking
+      serviceName: parking-service
+      servicePort: 80
+    - path: /api/booking
+      serviceName: booking-service
+      servicePort: 80
+    - path: /booking
+      serviceName: booking-service
+      servicePort: 80
+    - path: /api/payment
+      serviceName: payment-service
+      servicePort: 80
+    - path: /payment
+      serviceName: payment-service
+      servicePort: 80
+    - path: /api/notification
+      serviceName: notification-service
+      servicePort: 80
+    - path: /notification
+      serviceName: notification-service
+      servicePort: 80
+    - path: /
+      serviceName: frontend-svc
+      servicePort: 80
+
+notificationService:
+  enabled: true
+  configMap:
+    name: notification-configmap
+    data:
+      PORT: "4006"
+      AWS_REGION: "us-east-1"
+      APP_ENV: "dev"
+      SQS_ENABLED: "false"
+      NOTIFICATION_QUEUE_URL: ""
+      NOTIFICATION_TABLE: "smart-parking-notifications"
+      JWT_SECRET: "smartparking_super_secret"
+      CORS_ORIGIN: "*"
+      INTERNAL_API_KEY: "smartparking_internal_key"
+  deployment:
+    name: notification-deploy
+    replicas: 2
+    selectorLabels:
+      app: sps-notification
+    podLabels:
+      app: sps-notification
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 1
+        maxSurge: 1
+    containers:
+      - name: notification-container
+        image:
+          repository: nimeshsv814/tf-notification-service
+          tag: v8.0.0
+        ports:
+          - containerPort: 4006
+        envFromConfigMaps:
+          - notification-configmap
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "200m"
+            memory: "512Mi"
+  service:
+    name: notification-service
+    annotations:
+      alb.ingress.kubernetes.io/healthcheck-path: /health
+      alb.ingress.kubernetes.io/success-codes: "200-399"
+    selectorLabels:
+      app: sps-notification
+    ports:
+      - port: 80
+        targetPort: 4006
+    type: ClusterIP
+
+parkingService:
+  enabled: true
+  configMap:
+    name: parking-configmap
+    data:
+      PORT: "4002"
+      AWS_REGION: "us-east-1"
+      PARKING_SLOTS_TABLE: "smart-parking-slots"
+      JWT_SECRET: "smartparking_super_secret"
+      CORS_ORIGIN: "*"
+      INTERNAL_API_KEY: "smartparking_internal_key"
+  deployment:
+    name: parking-deploy
+    replicas: 2
+    selectorLabels:
+      app: sps-parking
+    podLabels:
+      app: sps-parking
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 1
+        maxSurge: 1
+    containers:
+      - name: parking-container
+        image:
+          repository: nimeshsv814/tf-parking-service
+          tag: v5.0.0
+        ports:
+          - containerPort: 4002
+        envFromConfigMaps:
+          - parking-configmap
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "200m"
+            memory: "512Mi"
+  service:
+    name: parking-service
+    annotations:
+      alb.ingress.kubernetes.io/healthcheck-path: /health
+      alb.ingress.kubernetes.io/success-codes: "200-399"
+    selectorLabels:
+      app: sps-parking
+    ports:
+      - port: 80
+        targetPort: 4002
+    type: ClusterIP
+
+paymentService:
+  enabled: true
+  configMap:
+    name: payment-configmap
+    data:
+      PORT: "4004"
+      AWS_REGION: "us-east-1"
+      APP_ENV: "dev"
+      SQS_ENABLED: "false"
+      NOTIFICATION_QUEUE_URL: ""
+      INVOICE_QUEUE_URL: ""
+      PAYMENT_TABLE: "smart-parking-payments"
+      JWT_SECRET: "smartparking_super_secret"
+      CORS_ORIGIN: "*"
+      BOOKING_SERVICE_URL: "http://booking-service"
+      NOTIFICATION_SERVICE_URL: "http://notification-service"
+      INTERNAL_API_KEY: "smartparking_internal_key"
+      RAZORPAY_KEY_ID: "rzp_test_ShFFMxa9JkqmZu"
+      RAZORPAY_KEY_SECRET: "1I4sLVIvCMWSTUlM5lCZm71j"
+  deployment:
+    name: payment-deploy
+    replicas: 2
+    selectorLabels:
+      app: sps-payment
+    podLabels:
+      app: sps-payment
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 1
+        maxSurge: 1
+    containers:
+      - name: payment-container
+        image:
+          repository: nimeshsv814/tf-payment-service
+          tag: v8.0.0
+        ports:
+          - containerPort: 4004
+        envFromConfigMaps:
+          - payment-configmap
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "200m"
+            memory: "512Mi"
+  service:
+    name: payment-service
+    annotations:
+      alb.ingress.kubernetes.io/healthcheck-path: /health
+      alb.ingress.kubernetes.io/success-codes: "200-399"
+    selectorLabels:
+      app: sps-payment
+    ports:
+      - port: 80
+        targetPort: 4004
+    type: ClusterIP
+
+schedulerService:
+  enabled: true
+  configMap:
+    name: scheduler-configmap
+    data:
+      PORT: "4005"
+      BOOKING_SERVICE_URL: "http://booking-service"
+      INTERNAL_API_KEY: "smartparking_internal_key"
+      CRON_SCHEDULE: "* * * * *"
+  deployment:
+    name: scheduler-deploy
+    replicas: 2
+    selectorLabels:
+      app: sps-scheduler
+    podLabels:
+      app: sps-scheduler
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 1
+        maxSurge: 1
+    containers:
+      - name: scheduler-container
+        image:
+          repository: nimeshsv814/tf-scheduler-service
+          tag: latest
+        ports:
+          - containerPort: 4005
+        envFromConfigMaps:
+          - scheduler-configmap
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "200m"
+            memory: "512Mi"
+  service:
+    name: scheduler-service
+    selectorLabels:
+      app: sps-scheduler
+    ports:
+      - port: 80
+        targetPort: 4005
+    type: ClusterIP

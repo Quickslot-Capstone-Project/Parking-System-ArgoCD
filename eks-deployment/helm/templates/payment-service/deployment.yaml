@@ -1,0 +1,5 @@
+{{- if .Values.paymentService.enabled }}
+{{- $deployment := deepCopy .Values.paymentService.deployment -}}
+{{- $_ := set $deployment "podAnnotations" (dict "checksum/payment-config" (toJson .Values.paymentService.configMap.data | sha256sum)) -}}
+{{ include "smart-parking.renderDeployment" (dict "root" . "deployment" $deployment "service" .Values.paymentService.service) }}
+{{- end }}

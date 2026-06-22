@@ -1,0 +1,5 @@
+{{- if .Values.notificationService.enabled }}
+{{- $deployment := deepCopy .Values.notificationService.deployment -}}
+{{- $_ := set $deployment "podAnnotations" (dict "checksum/notification-config" (toJson .Values.notificationService.configMap.data | sha256sum)) -}}
+{{ include "smart-parking.renderDeployment" (dict "root" . "deployment" $deployment "service" .Values.notificationService.service) }}
+{{- end }}

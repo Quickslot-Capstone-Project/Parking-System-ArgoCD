@@ -1,0 +1,74 @@
+environment: ""
+
+rollout:
+  enabled: true
+
+rolloutStrategy:
+  default:
+    steps:
+      - setWeight: 20
+      - pause: {}
+      - setWeight: 50
+      - pause: {}
+  dev:
+    steps:
+      - setWeight: 50
+  prod:
+    steps:
+      - setWeight: 20
+      - pause: {}
+      - setWeight: 50
+      - pause: {}
+
+authService:
+  enabled: true
+  configMap:
+    name: auth-configmap
+    data:
+      PORT: "4001"
+      AWS_REGION: "us-east-1"
+      AUTH_USERS_TABLE: "smart-parking-users"
+      JWT_SECRET: "smartparking_super_secret"
+      JWT_EXPIRES_IN: "7d"
+      CORS_ORIGIN: "*"
+      SEED_ADMIN_EMAIL: "admin@parking.com"
+      SEED_ADMIN_PASSWORD: "Admin@123"
+      SEED_USER_EMAIL: "user@parking.com"
+      SEED_USER_PASSWORD: "User@123"
+  deployment:
+    name: auth-deploy
+    replicas: 1
+    selectorLabels:
+      app: sps-auth
+    podLabels:
+      app: sps-auth
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 0
+        maxSurge: 1
+    containers:
+      - name: auth-container
+        image:
+          repository: nimeshsv814/tf-auth-service
+          tag: v4.0.0
+        ports:
+          - containerPort: 4001
+        envFromConfigMaps:
+          - auth-configmap
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "200m"
+            memory: "512Mi"
+  service:
+    name: auth-service
+    selectorLabels:
+      app: sps-auth
+    ports:
+      - port: 80
+        targetPort: 4001
+    type: ClusterIP
+

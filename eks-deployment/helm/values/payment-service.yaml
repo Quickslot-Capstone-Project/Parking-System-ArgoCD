@@ -1,0 +1,74 @@
+environment: ""
+
+rollout:
+  enabled: true
+
+rolloutStrategy:
+  default:
+    steps:
+      - setWeight: 20
+      - pause: {}
+      - setWeight: 50
+      - pause: {}
+  dev:
+    steps:
+      - setWeight: 50
+  prod:
+    steps:
+      - setWeight: 20
+      - pause: {}
+      - setWeight: 50
+      - pause: {}
+
+paymentService:
+  enabled: true
+  configMap:
+    name: payment-configmap
+    data:
+      PORT: "4004"
+      AWS_REGION: "us-east-1"
+      PAYMENT_TABLE: "smart-parking-payments"
+      JWT_SECRET: "smartparking_super_secret"
+      CORS_ORIGIN: "*"
+      BOOKING_SERVICE_URL: "http://booking-service"
+      NOTIFICATION_SERVICE_URL: "http://notification-service"
+      INTERNAL_API_KEY: "smartparking_internal_key"
+      RAZORPAY_KEY_ID: "rzp_test_ShFFMxa9JkqmZu"
+      RAZORPAY_KEY_SECRET: "1I4sLVIvCMWSTUlM5lCZm71j"
+  deployment:
+    name: payment-deploy
+    replicas: 1
+    selectorLabels:
+      app: sps-payment
+    podLabels:
+      app: sps-payment
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 0
+        maxSurge: 1
+    containers:
+      - name: payment-container
+        image:
+          repository: nimeshsv814/tf-payment-service
+          tag: v8.0.0
+        ports:
+          - containerPort: 4004
+        envFromConfigMaps:
+          - payment-configmap
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "200m"
+            memory: "512Mi"
+  service:
+    name: payment-service
+    selectorLabels:
+      app: sps-payment
+    ports:
+      - port: 80
+        targetPort: 4004
+    type: ClusterIP
+

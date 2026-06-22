@@ -1,0 +1,70 @@
+environment: ""
+
+rollout:
+  enabled: true
+
+rolloutStrategy:
+  default:
+    steps:
+      - setWeight: 20
+      - pause: {}
+      - setWeight: 50
+      - pause: {}
+  dev:
+    steps:
+      - setWeight: 50
+  prod:
+    steps:
+      - setWeight: 20
+      - pause: {}
+      - setWeight: 50
+      - pause: {}
+
+notificationService:
+  enabled: true
+  configMap:
+    name: notification-configmap
+    data:
+      PORT: "4006"
+      AWS_REGION: "us-east-1"
+      NOTIFICATION_TABLE: "smart-parking-notifications"
+      JWT_SECRET: "smartparking_super_secret"
+      CORS_ORIGIN: "*"
+      INTERNAL_API_KEY: "smartparking_internal_key"
+  deployment:
+    name: notification-deploy
+    replicas: 1
+    selectorLabels:
+      app: sps-notification
+    podLabels:
+      app: sps-notification
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 0
+        maxSurge: 1
+    containers:
+      - name: notification-container
+        image:
+          repository: nimeshsv814/tf-notification-service
+          tag: v8.0.0
+        ports:
+          - containerPort: 4006
+        envFromConfigMaps:
+          - notification-configmap
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "200m"
+            memory: "512Mi"
+  service:
+    name: notification-service
+    selectorLabels:
+      app: sps-notification
+    ports:
+      - port: 80
+        targetPort: 4006
+    type: ClusterIP
+

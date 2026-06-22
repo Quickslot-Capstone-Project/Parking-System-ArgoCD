@@ -1,0 +1,70 @@
+environment: ""
+
+rollout:
+  enabled: true
+
+rolloutStrategy:
+  default:
+    steps:
+      - setWeight: 20
+      - pause: {}
+      - setWeight: 50
+      - pause: {}
+  dev:
+    steps:
+      - setWeight: 50
+  prod:
+    steps:
+      - setWeight: 20
+      - pause: {}
+      - setWeight: 50
+      - pause: {}
+
+parkingService:
+  enabled: true
+  configMap:
+    name: parking-configmap
+    data:
+      PORT: "4002"
+      AWS_REGION: "us-east-1"
+      PARKING_SLOTS_TABLE: "smart-parking-slots"
+      JWT_SECRET: "smartparking_super_secret"
+      CORS_ORIGIN: "*"
+      INTERNAL_API_KEY: "smartparking_internal_key"
+  deployment:
+    name: parking-deploy
+    replicas: 1
+    selectorLabels:
+      app: sps-parking
+    podLabels:
+      app: sps-parking
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 0
+        maxSurge: 1
+    containers:
+      - name: parking-container
+        image:
+          repository: nimeshsv814/tf-parking-service
+          tag: v5.0.0
+        ports:
+          - containerPort: 4002
+        envFromConfigMaps:
+          - parking-configmap
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "200m"
+            memory: "512Mi"
+  service:
+    name: parking-service
+    selectorLabels:
+      app: sps-parking
+    ports:
+      - port: 80
+        targetPort: 4002
+    type: ClusterIP
+

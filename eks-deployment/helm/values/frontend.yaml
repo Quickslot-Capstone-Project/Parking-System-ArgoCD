@@ -1,0 +1,79 @@
+environment: ""
+
+rollout:
+  enabled: true
+
+rolloutStrategy:
+  default:
+    steps:
+      - setWeight: 20
+      - pause: {}
+      - setWeight: 50
+      - pause: {}
+  dev:
+    steps:
+      - setWeight: 50
+  prod:
+    steps:
+      - setWeight: 20
+      - pause: {}
+      - setWeight: 50
+      - pause: {}
+
+frontend:
+  enabled: true
+  configMap:
+    name: frontend-configmap
+    data:
+      VITE_AUTH_SERVICE_URL: "/auth"
+      VITE_PARKING_SERVICE_URL: "/parking"
+      VITE_BOOKING_SERVICE_URL: "/booking"
+      VITE_PAYMENT_SERVICE_URL: "/payment"
+      VITE_NOTIFICATION_SERVICE_URL: "/notification"
+      VITE_RAZORPAY_KEY_ID: "rzp_test_ShFFMxa9JkqmZu"
+  deployment:
+    name: frontend-deploy
+    replicas: 1
+    selectorLabels:
+      app: sps-frontend
+    podLabels:
+      app: sps-frontend
+    strategy:
+      type: RollingUpdate
+      rollingUpdate:
+        maxUnavailable: 0
+        maxSurge: 1
+    containers:
+      - name: frontend-container
+        image:
+          repository: nimeshsv814/tf-frontend
+          tag: v6.0.8
+        ports:
+          - containerPort: 80
+        envFromConfigMaps:
+          - frontend-configmap
+        volumeMounts:
+          - name: frontend-nginx-config
+            mountPath: /etc/nginx/conf.d/default.conf
+            subPath: default.conf
+            readOnly: true
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "256Mi"
+          limits:
+            cpu: "200m"
+            memory: "512Mi"
+    volumes:
+      - name: frontend-nginx-config
+        configMap:
+          name: frontend-nginx-config
+  service:
+    name: frontend-svc
+    selectorLabels:
+      app: sps-frontend
+    ports:
+      - port: 80
+        targetPort: 80
+    type: ClusterIP
+
