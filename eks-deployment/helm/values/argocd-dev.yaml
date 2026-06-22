@@ -15,8 +15,8 @@ bookingService:
   deployment:
     replicas: 1
     image:
-      repository: nimeshsv814/tf-booking-service
-      tag: v8.0.0
+      repository: 533595510771.dkr.ecr.us-east-1.amazonaws.com/booking-service
+      tag: 131c420637d2f3d22e1d3384b815e9105eaf92ae
 frontend:
   deployment:
     replicas: 1
