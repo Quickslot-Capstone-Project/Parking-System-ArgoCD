@@ -38,8 +38,8 @@ parkingService:
   deployment:
     replicas: 1
     image:
-      repository: nimeshsv814/tf-parking-service
-      tag: v5.0.0
+      repository: 533595510771.dkr.ecr.us-east-1.amazonaws.com/parking-service
+      tag: v1.0.0
 paymentService:
   configMap:
     data:
