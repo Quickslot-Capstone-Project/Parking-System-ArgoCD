@@ -39,7 +39,7 @@ parkingService:
     replicas: 1
     image:
       repository: 533595510771.dkr.ecr.us-east-1.amazonaws.com/parking-service
-      tag: 2a925242d9e1069f2c8dca7c5ab3cfbf67a611f9
+      tag: 0ddca4239a21215f1eb67e41ee5a66452acdb63e
 paymentService:
   configMap:
     data:
