@@ -53,7 +53,7 @@ paymentService:
     replicas: 1
     image:
       repository: 533595510771.dkr.ecr.us-east-1.amazonaws.com/payment-service
-      tag: b2e12ad3366c82738566518639d2977be0bd2424
+      tag: 5d75ff936789035d33463b33b8989ec85c41da5e
 schedulerService:
   deployment:
     replicas: 1
