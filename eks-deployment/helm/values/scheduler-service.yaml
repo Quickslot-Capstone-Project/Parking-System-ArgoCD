@@ -27,7 +27,8 @@ schedulerService:
     data:
       PORT: "4005"
       BOOKING_SERVICE_URL: "http://booking-service"
-      INTERNAL_API_KEY: "smartparking_internal_key"
+      AWS_REGION: "us-east-1"
+      APPLICATION_SECRETS_MANAGER_SECRET_ID: "smart-parking-dev-application-secrets"
       CRON_SCHEDULE: "* * * * *"
   deployment:
     name: scheduler-deploy
@@ -65,5 +66,4 @@ schedulerService:
       - port: 80
         targetPort: 4005
     type: ClusterIP
-
 

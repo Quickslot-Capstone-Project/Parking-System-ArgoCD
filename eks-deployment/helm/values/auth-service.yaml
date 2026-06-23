@@ -27,14 +27,12 @@ authService:
     data:
       PORT: "4001"
       AWS_REGION: "us-east-1"
+      APPLICATION_SECRETS_MANAGER_SECRET_ID: "smart-parking-dev-application-secrets"
       AUTH_USERS_TABLE: "smart-parking-users"
-      JWT_SECRET: "smartparking_super_secret"
       JWT_EXPIRES_IN: "7d"
       CORS_ORIGIN: "*"
       SEED_ADMIN_EMAIL: "admin@parking.com"
-      SEED_ADMIN_PASSWORD: "Admin@123"
       SEED_USER_EMAIL: "user@parking.com"
-      SEED_USER_PASSWORD: "User@123"
   deployment:
     name: auth-deploy
     replicas: 1
@@ -71,4 +69,3 @@ authService:
       - port: 80
         targetPort: 4001
     type: ClusterIP
-

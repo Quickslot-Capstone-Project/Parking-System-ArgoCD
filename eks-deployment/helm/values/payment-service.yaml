@@ -27,14 +27,11 @@ paymentService:
     data:
       PORT: "4004"
       AWS_REGION: "us-east-1"
+      APPLICATION_SECRETS_MANAGER_SECRET_ID: "smart-parking-dev-application-secrets"
       PAYMENT_TABLE: "smart-parking-payments"
-      JWT_SECRET: "smartparking_super_secret"
       CORS_ORIGIN: "*"
       BOOKING_SERVICE_URL: "http://booking-service"
       NOTIFICATION_SERVICE_URL: "http://notification-service"
-      INTERNAL_API_KEY: "smartparking_internal_key"
-      RAZORPAY_KEY_ID: "rzp_test_ShFFMxa9JkqmZu"
-      RAZORPAY_KEY_SECRET: "1I4sLVIvCMWSTUlM5lCZm71j"
   deployment:
     name: payment-deploy
     replicas: 1
@@ -71,4 +68,3 @@ paymentService:
       - port: 80
         targetPort: 4004
     type: ClusterIP
-

@@ -32,14 +32,12 @@ authService:
     data:
       PORT: "4001"
       AWS_REGION: "us-east-1"
+      APPLICATION_SECRETS_MANAGER_SECRET_ID: "smart-parking-dev-application-secrets"
       AUTH_USERS_TABLE: "smart-parking-users"
-      JWT_SECRET: "smartparking_super_secret"
       JWT_EXPIRES_IN: "7d"
       CORS_ORIGIN: "*"
       SEED_ADMIN_EMAIL: "admin@parking.com"
-      SEED_ADMIN_PASSWORD: "Admin@123"
       SEED_USER_EMAIL: "user@parking.com"
-      SEED_USER_PASSWORD: "User@123"
   deployment:
     name: auth-deploy
     replicas: 2
@@ -87,6 +85,7 @@ bookingService:
     data:
       PORT: "4003"
       AWS_REGION: "us-east-1"
+      APPLICATION_SECRETS_MANAGER_SECRET_ID: "smart-parking-dev-application-secrets"
       APP_ENV: "dev"
       SQS_ENABLED: "false"
       NOTIFICATION_QUEUE_URL: ""
@@ -94,11 +93,9 @@ bookingService:
       BEDROCK_REGION: "us-east-1"
       BEDROCK_MODEL_ID: "amazon.nova-pro-v1:0"
       AI_ASSISTANT_LAMBDA_NAME: "smart-parking-dev-ai-assistant"
-      JWT_SECRET: "smartparking_super_secret"
       CORS_ORIGIN: "*"
       PARKING_SERVICE_URL: "http://parking-service"
       NOTIFICATION_SERVICE_URL: "http://notification-service"
-      INTERNAL_API_KEY: "smartparking_internal_key"
       BOOKING_HOLD_MINUTES: "10"
   deployment:
     name: booking-deploy
@@ -150,7 +147,6 @@ frontend:
       VITE_BOOKING_SERVICE_URL: "/booking"
       VITE_PAYMENT_SERVICE_URL: "/payment"
       VITE_NOTIFICATION_SERVICE_URL: "/notification"
-      VITE_RAZORPAY_KEY_ID: "rzp_test_ShFFMxa9JkqmZu"
   deployment:
     name: frontend-deploy
     replicas: 2
@@ -261,13 +257,12 @@ notificationService:
     data:
       PORT: "4006"
       AWS_REGION: "us-east-1"
+      APPLICATION_SECRETS_MANAGER_SECRET_ID: "smart-parking-dev-application-secrets"
       APP_ENV: "dev"
       SQS_ENABLED: "false"
       NOTIFICATION_QUEUE_URL: ""
       NOTIFICATION_TABLE: "smart-parking-notifications"
-      JWT_SECRET: "smartparking_super_secret"
       CORS_ORIGIN: "*"
-      INTERNAL_API_KEY: "smartparking_internal_key"
   deployment:
     name: notification-deploy
     replicas: 2
@@ -315,10 +310,9 @@ parkingService:
     data:
       PORT: "4002"
       AWS_REGION: "us-east-1"
+      APPLICATION_SECRETS_MANAGER_SECRET_ID: "smart-parking-dev-application-secrets"
       PARKING_SLOTS_TABLE: "smart-parking-slots"
-      JWT_SECRET: "smartparking_super_secret"
       CORS_ORIGIN: "*"
-      INTERNAL_API_KEY: "smartparking_internal_key"
   deployment:
     name: parking-deploy
     replicas: 2
@@ -366,18 +360,15 @@ paymentService:
     data:
       PORT: "4004"
       AWS_REGION: "us-east-1"
+      APPLICATION_SECRETS_MANAGER_SECRET_ID: "smart-parking-dev-application-secrets"
       APP_ENV: "dev"
       SQS_ENABLED: "false"
       NOTIFICATION_QUEUE_URL: ""
       INVOICE_QUEUE_URL: ""
       PAYMENT_TABLE: "smart-parking-payments"
-      JWT_SECRET: "smartparking_super_secret"
       CORS_ORIGIN: "*"
       BOOKING_SERVICE_URL: "http://booking-service"
       NOTIFICATION_SERVICE_URL: "http://notification-service"
-      INTERNAL_API_KEY: "smartparking_internal_key"
-      RAZORPAY_KEY_ID: "rzp_test_ShFFMxa9JkqmZu"
-      RAZORPAY_KEY_SECRET: "1I4sLVIvCMWSTUlM5lCZm71j"
   deployment:
     name: payment-deploy
     replicas: 2
@@ -425,7 +416,8 @@ schedulerService:
     data:
       PORT: "4005"
       BOOKING_SERVICE_URL: "http://booking-service"
-      INTERNAL_API_KEY: "smartparking_internal_key"
+      AWS_REGION: "us-east-1"
+      APPLICATION_SECRETS_MANAGER_SECRET_ID: "smart-parking-dev-application-secrets"
       CRON_SCHEDULE: "* * * * *"
   deployment:
     name: scheduler-deploy

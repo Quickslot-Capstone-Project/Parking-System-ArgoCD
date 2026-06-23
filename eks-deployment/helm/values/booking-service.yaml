@@ -27,15 +27,14 @@ bookingService:
     data:
       PORT: "4003"
       AWS_REGION: "us-east-1"
+      APPLICATION_SECRETS_MANAGER_SECRET_ID: "smart-parking-dev-application-secrets"
       BOOKING_TABLE: "smart-parking-bookings"
       BEDROCK_REGION: "us-east-1"
       BEDROCK_MODEL_ID: "amazon.nova-pro-v1:0"
       AI_ASSISTANT_LAMBDA_NAME: "smart-parking-dev-ai-assistant"
-      JWT_SECRET: "smartparking_super_secret"
       CORS_ORIGIN: "*"
       PARKING_SERVICE_URL: "http://parking-service"
       NOTIFICATION_SERVICE_URL: "http://notification-service"
-      INTERNAL_API_KEY: "smartparking_internal_key"
       BOOKING_HOLD_MINUTES: "10"
   deployment:
     name: booking-deploy
