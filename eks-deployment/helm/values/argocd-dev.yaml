@@ -5,7 +5,7 @@ authService:
     replicas: 1
     image:
       repository: 533595510771.dkr.ecr.us-east-1.amazonaws.com/auth-service
-      tag: f43154398d257f8913f54f12de959bb3c5160bc3
+      tag: 1bad76870a39ac4c7c823ec4d9850b264e61b016
 bookingService:
   configMap:
     data:
