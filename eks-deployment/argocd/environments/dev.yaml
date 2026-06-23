@@ -9,7 +9,7 @@ spec:
   project: smart-parking
   revisionHistoryLimit: 5
   source:
-    repoURL: https://github.com/UST-Capstone-Project/Parking-System.git
+    repoURL: https://github.com/Quickslot-Capstone-Project/Parking-System-ArgoCD.git
     targetRevision: dev
     path: eks-deployment/helm
     helm:

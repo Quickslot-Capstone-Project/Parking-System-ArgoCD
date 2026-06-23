@@ -6,7 +6,7 @@ metadata:
 spec:
   description: Smart Parking dev and prod GitOps environments.
   sourceRepos:
-    - https://github.com/UST-Capstone-Project/Parking-System.git
+    - https://github.com/Quickslot-Capstone-Project/Parking-System-ArgoCD.git
   destinations:
     - server: https://kubernetes.default.svc
       namespace: argocd
