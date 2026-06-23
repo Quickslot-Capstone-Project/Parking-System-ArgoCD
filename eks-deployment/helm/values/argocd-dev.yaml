@@ -22,7 +22,7 @@ frontend:
     replicas: 1
     image:
       repository: 533595510771.dkr.ecr.us-east-1.amazonaws.com/frontend
-      tag: 4fce45d3879b1d390b74f96c18a12feb234255a8
+      tag: 54a1e08ee7d39a5398c0413d8ab8b95c8d03a69b
 notificationService:
   configMap:
     data:
