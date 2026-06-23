@@ -29,7 +29,9 @@ notificationService:
       AWS_REGION: "us-east-1"
       APPLICATION_SECRETS_MANAGER_SECRET_ID: "smart-parking-dev-application-secrets"
       NOTIFICATION_TABLE: "smart-parking-notifications"
+      JWT_SECRET: "smartparking_super_secret"
       CORS_ORIGIN: "*"
+      INTERNAL_API_KEY: "smartparking_internal_key"
   deployment:
     name: notification-deploy
     replicas: 1

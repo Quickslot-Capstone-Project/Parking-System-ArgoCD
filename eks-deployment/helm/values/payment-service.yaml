@@ -29,9 +29,11 @@ paymentService:
       AWS_REGION: "us-east-1"
       APPLICATION_SECRETS_MANAGER_SECRET_ID: "smart-parking-dev-application-secrets"
       PAYMENT_TABLE: "smart-parking-payments"
+      JWT_SECRET: "smartparking_super_secret"
       CORS_ORIGIN: "*"
       BOOKING_SERVICE_URL: "http://booking-service"
       NOTIFICATION_SERVICE_URL: "http://notification-service"
+      INTERNAL_API_KEY: "smartparking_internal_key"
   deployment:
     name: payment-deploy
     replicas: 1

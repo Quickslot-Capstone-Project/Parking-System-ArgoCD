@@ -29,7 +29,9 @@ parkingService:
       AWS_REGION: "us-east-1"
       APPLICATION_SECRETS_MANAGER_SECRET_ID: "smart-parking-dev-application-secrets"
       PARKING_SLOTS_TABLE: "smart-parking-slots"
+      JWT_SECRET: "smartparking_super_secret"
       CORS_ORIGIN: "*"
+      INTERNAL_API_KEY: "smartparking_internal_key"
   deployment:
     name: parking-deploy
     replicas: 1

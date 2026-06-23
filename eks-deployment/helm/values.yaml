@@ -94,9 +94,11 @@ bookingService:
       BEDROCK_REGION: "us-east-1"
       BEDROCK_MODEL_ID: "amazon.nova-pro-v1:0"
       AI_ASSISTANT_LAMBDA_NAME: "smart-parking-dev-ai-assistant"
+      JWT_SECRET: "smartparking_super_secret"
       CORS_ORIGIN: "*"
       PARKING_SERVICE_URL: "http://parking-service"
       NOTIFICATION_SERVICE_URL: "http://notification-service"
+      INTERNAL_API_KEY: "smartparking_internal_key"
       BOOKING_HOLD_MINUTES: "10"
   deployment:
     name: booking-deploy
@@ -263,7 +265,9 @@ notificationService:
       SQS_ENABLED: "false"
       NOTIFICATION_QUEUE_URL: ""
       NOTIFICATION_TABLE: "smart-parking-notifications"
+      JWT_SECRET: "smartparking_super_secret"
       CORS_ORIGIN: "*"
+      INTERNAL_API_KEY: "smartparking_internal_key"
   deployment:
     name: notification-deploy
     replicas: 2
@@ -313,7 +317,9 @@ parkingService:
       AWS_REGION: "us-east-1"
       APPLICATION_SECRETS_MANAGER_SECRET_ID: "smart-parking-dev-application-secrets"
       PARKING_SLOTS_TABLE: "smart-parking-slots"
+      JWT_SECRET: "smartparking_super_secret"
       CORS_ORIGIN: "*"
+      INTERNAL_API_KEY: "smartparking_internal_key"
   deployment:
     name: parking-deploy
     replicas: 2
@@ -367,9 +373,11 @@ paymentService:
       NOTIFICATION_QUEUE_URL: ""
       INVOICE_QUEUE_URL: ""
       PAYMENT_TABLE: "smart-parking-payments"
+      JWT_SECRET: "smartparking_super_secret"
       CORS_ORIGIN: "*"
       BOOKING_SERVICE_URL: "http://booking-service"
       NOTIFICATION_SERVICE_URL: "http://notification-service"
+      INTERNAL_API_KEY: "smartparking_internal_key"
   deployment:
     name: payment-deploy
     replicas: 2
@@ -419,6 +427,7 @@ schedulerService:
       BOOKING_SERVICE_URL: "http://booking-service"
       AWS_REGION: "us-east-1"
       APPLICATION_SECRETS_MANAGER_SECRET_ID: "smart-parking-dev-application-secrets"
+      INTERNAL_API_KEY: "smartparking_internal_key"
       CRON_SCHEDULE: "* * * * *"
   deployment:
     name: scheduler-deploy
