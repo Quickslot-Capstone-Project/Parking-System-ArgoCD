@@ -34,6 +34,7 @@ authService:
       AWS_REGION: "us-east-1"
       APPLICATION_SECRETS_MANAGER_SECRET_ID: "smart-parking-dev-application-secrets"
       AUTH_USERS_TABLE: "smart-parking-users"
+      JWT_SECRET: "smartparking_super_secret"
       JWT_EXPIRES_IN: "7d"
       CORS_ORIGIN: "*"
       SEED_ADMIN_EMAIL: "admin@parking.com"
