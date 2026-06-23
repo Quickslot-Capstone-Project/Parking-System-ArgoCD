@@ -59,6 +59,6 @@ schedulerService:
     replicas: 1
     image:
       repository: 533595510771.dkr.ecr.us-east-1.amazonaws.com/scheduler-service
-      tag: cff025a810477305f25b379cbb0dfc06624c6cd6
+      tag: 91e855f81277ba612f6e6ce0f67ce2fbf5fb34aa
 ingress:
   name: smart-parking-dev-alb
