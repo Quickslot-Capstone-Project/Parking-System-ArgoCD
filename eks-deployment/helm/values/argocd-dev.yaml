@@ -33,7 +33,7 @@ notificationService:
     replicas: 1
     image:
       repository: 533595510771.dkr.ecr.us-east-1.amazonaws.com/notification-service
-      tag: 7bbf76024eee1fd8ee6580326a0411210218b600
+      tag: 3acbff8bf0cf8924f499342329fde4737b223992
 parkingService:
   deployment:
     replicas: 1
