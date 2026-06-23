@@ -16,7 +16,7 @@ bookingService:
     replicas: 1
     image:
       repository: 533595510771.dkr.ecr.us-east-1.amazonaws.com/booking-service
-      tag: 131c420637d2f3d22e1d3384b815e9105eaf92ae
+      tag: ea9379081d167fb7aa26af167f63dbe91763cc26
 frontend:
   deployment:
     replicas: 1
