@@ -7,7 +7,6 @@ spec:
   description: Smart Parking dev and prod GitOps environments.
   sourceRepos:
     - https://github.com/Quickslot-Capstone-Project/Parking-System-ArgoCD.git
-    - https://github.com/argoproj/argo-rollouts.git
   destinations:
     - server: https://kubernetes.default.svc
       namespace: argocd
@@ -15,11 +14,9 @@ spec:
       namespace: dev
     - server: https://kubernetes.default.svc
       namespace: prod
-    - server: https://kubernetes.default.svc
-      namespace: argo-rollouts
   clusterResourceWhitelist:
-    - group: "*"
-      kind: "*"
+    - group: ""
+      kind: Namespace
   namespaceResourceWhitelist:
     - group: "*"
       kind: "*"
