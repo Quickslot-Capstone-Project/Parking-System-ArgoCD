@@ -148,3 +148,4 @@ terraform destroy
 ```
 
 If an Ingress or AWS load balancer still exists, wait before running `terraform destroy`. This prevents ALB network interfaces and security groups from blocking subnet/VPC deletion.
+2
