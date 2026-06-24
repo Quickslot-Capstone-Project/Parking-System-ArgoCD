@@ -13,7 +13,7 @@ spec:
     targetRevision: stable
     path: manifests
     directory:
-      include: "{install.yaml,dashboard-install.yaml}"
+      include: "install.yaml"
   destination:
     server: https://kubernetes.default.svc
     namespace: argo-rollouts
