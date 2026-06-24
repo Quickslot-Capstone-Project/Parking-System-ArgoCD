@@ -145,6 +145,32 @@ After testing, promote the desired tag in `values/argocd-prod.yaml` through the 
 
 ## 6. Access the UI
 
+The app-of-apps includes `smart-parking-argocd-edge`, which exposes Argo CD
+through the production ALB and CloudFront path `quickslot.site/argocd`.
+
+After the edge Application syncs, restart the Argo CD server once so it rereads
+the `/argocd` command parameters:
+
+```bash
+kubectl rollout restart deployment/argocd-server --namespace argocd
+kubectl rollout status deployment/argocd-server --namespace argocd --timeout=10m
+```
+
+This configures Argo CD for the `/argocd` subpath and creates an
+`argocd-server-edge` Ingress in the same AWS Load Balancer Controller group as
+the prod application Ingress. The prod app and Argo CD Ingresses must both use:
+
+```text
+alb.ingress.kubernetes.io/group.name: smart-parking-prod-edge
+```
+
+After the prod Application syncs and the Argo CD edge manifest is applied, the
+dashboard should be available at:
+
+```text
+https://quickslot.site/argocd
+```
+
 Get the initial password:
 
 ```bash

@@ -62,3 +62,6 @@ schedulerService:
       tag: v1.0.0
 ingress:
   name: smart-parking-prod-alb
+  annotations:
+    alb.ingress.kubernetes.io/group.name: smart-parking-prod-edge
+    alb.ingress.kubernetes.io/group.order: "20"
