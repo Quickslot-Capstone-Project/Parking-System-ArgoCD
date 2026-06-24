@@ -5,7 +5,7 @@ authService:
     replicas: 1
     image:
       repository: 533595510771.dkr.ecr.us-east-1.amazonaws.com/auth-service
-      tag: v1.0.1
+      tag: v4.0.0
 bookingService:
   configMap:
     data:
@@ -16,13 +16,13 @@ bookingService:
     replicas: 1
     image:
       repository: 533595510771.dkr.ecr.us-east-1.amazonaws.com/booking-service
-      tag: v1.0.0
+      tag: v4.0.0
 frontend:
   deployment:
     replicas: 1
     image:
       repository: 533595510771.dkr.ecr.us-east-1.amazonaws.com/frontend
-      tag: v1.0.0
+      tag: v4.0.0
 notificationService:
   configMap:
     data:
@@ -33,13 +33,13 @@ notificationService:
     replicas: 1
     image:
       repository: 533595510771.dkr.ecr.us-east-1.amazonaws.com/notification-service
-      tag: v1.0.0
+      tag: v4.0.0
 parkingService:
   deployment:
     replicas: 1
     image:
       repository: 533595510771.dkr.ecr.us-east-1.amazonaws.com/parking-service
-      tag: v1.0.0
+      tag: v4.0.0
 paymentService:
   configMap:
     data:
@@ -53,13 +53,13 @@ paymentService:
     replicas: 1
     image:
       repository: 533595510771.dkr.ecr.us-east-1.amazonaws.com/payment-service
-      tag: v1.0.0
+      tag: v4.0.0
 schedulerService:
   deployment:
     replicas: 1
     image:
       repository: 533595510771.dkr.ecr.us-east-1.amazonaws.com/scheduler-service
-      tag: v1.0.0
+      tag: v4.0.0
 ingress:
   name: smart-parking-prod-alb
   annotations:
