@@ -1,0 +1,20 @@
+{{- if and .Values.frontend.enabled .Values.frontend.autoscaling .Values.frontend.autoscaling.enabled }}
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ .Values.frontend.autoscaling.name | default (printf "%s-hpa" .Values.frontend.deployment.name) }}
+  namespace: {{ include "smart-parking.namespace" . }}
+spec:
+  scaleTargetRef:
+    apiVersion: {{ if and .Values.rollout .Values.rollout.enabled }}argoproj.io/v1alpha1{{ else }}apps/v1{{ end }}
+    kind: {{ if and .Values.rollout .Values.rollout.enabled }}Rollout{{ else }}Deployment{{ end }}
+    name: {{ .Values.frontend.deployment.name }}
+  minReplicas: {{ .Values.frontend.autoscaling.minReplicas }}
+  maxReplicas: {{ .Values.frontend.autoscaling.maxReplicas }}
+  metrics:
+{{ toYaml .Values.frontend.autoscaling.metrics | nindent 4 }}
+{{- with .Values.frontend.autoscaling.behavior }}
+  behavior:
+{{ toYaml . | nindent 4 }}
+{{- end }}
+{{- end }}

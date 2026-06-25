@@ -104,6 +104,18 @@ spec:
           resources:
 {{ toYaml $container.resources | nindent 12 }}
 {{- end }}
+{{- if $container.livenessProbe }}
+          livenessProbe:
+{{ toYaml $container.livenessProbe | nindent 12 }}
+{{- end }}
+{{- if $container.readinessProbe }}
+          readinessProbe:
+{{ toYaml $container.readinessProbe | nindent 12 }}
+{{- end }}
+{{- if $container.startupProbe }}
+          startupProbe:
+{{ toYaml $container.startupProbe | nindent 12 }}
+{{- end }}
 {{- if $container.volumeMounts }}
           volumeMounts:
 {{ toYaml $container.volumeMounts | nindent 12 }}
