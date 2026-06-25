@@ -2,7 +2,7 @@ namespace: prod
 environment: prod
 authService:
   deployment:
-    replicas: 1
+    replicas: 2
     image:
       repository: 533595510771.dkr.ecr.us-east-1.amazonaws.com/auth-service
       tag: v4.0.0
@@ -13,13 +13,13 @@ bookingService:
       SQS_ENABLED: "true"
       NOTIFICATION_QUEUE_URL: https://sqs.us-east-1.amazonaws.com/533595510771/smart-parking-prod-notifications
   deployment:
-    replicas: 1
+    replicas: 2
     image:
       repository: 533595510771.dkr.ecr.us-east-1.amazonaws.com/booking-service
       tag: v4.0.0
 frontend:
   deployment:
-    replicas: 1
+    replicas: 2
     image:
       repository: 533595510771.dkr.ecr.us-east-1.amazonaws.com/frontend
       tag: v4.0.0
@@ -30,13 +30,13 @@ notificationService:
       SQS_ENABLED: "true"
       NOTIFICATION_QUEUE_URL: https://sqs.us-east-1.amazonaws.com/533595510771/smart-parking-prod-notifications
   deployment:
-    replicas: 1
+    replicas: 2
     image:
       repository: 533595510771.dkr.ecr.us-east-1.amazonaws.com/notification-service
       tag: v4.0.0
 parkingService:
   deployment:
-    replicas: 1
+    replicas: 2
     image:
       repository: 533595510771.dkr.ecr.us-east-1.amazonaws.com/parking-service
       tag: v4.0.0
@@ -50,13 +50,13 @@ paymentService:
       PAYMENT_INVOICE_BUCKET: smart-parking-prod-invoices-533595510771-us-east-1
       PAYMENT_INVOICE_KMS_KEY_ARN: arn:aws:kms:us-east-1:533595510771:alias/smart-parking-prod-invoices
   deployment:
-    replicas: 1
+    replicas: 2
     image:
       repository: 533595510771.dkr.ecr.us-east-1.amazonaws.com/payment-service
       tag: v4.0.0
 schedulerService:
   deployment:
-    replicas: 1
+    replicas: 2
     image:
       repository: 533595510771.dkr.ecr.us-east-1.amazonaws.com/scheduler-service
       tag: v4.0.0
