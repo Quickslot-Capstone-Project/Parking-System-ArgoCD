@@ -7,6 +7,8 @@ spec:
   description: Smart Parking dev and prod GitOps environments.
   sourceRepos:
     - https://github.com/Quickslot-Capstone-Project/Parking-System-ArgoCD.git
+    - https://prometheus-community.github.io/helm-charts
+    - https://grafana-community.github.io/helm-charts
   destinations:
     - server: https://kubernetes.default.svc
       namespace: argocd
@@ -14,9 +16,13 @@ spec:
       namespace: dev
     - server: https://kubernetes.default.svc
       namespace: prod
+    - server: https://kubernetes.default.svc
+      namespace: monitoring
+    - server: https://kubernetes.default.svc
+      namespace: kube-system
   clusterResourceWhitelist:
-    - group: ""
-      kind: Namespace
+    - group: "*"
+      kind: "*"
   namespaceResourceWhitelist:
     - group: "*"
       kind: "*"
